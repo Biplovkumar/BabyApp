@@ -14,6 +14,8 @@
         android:layout_margin="5dp"
         android:textAllCaps="true"
         android:textSize="20sp"
+        android:drawableLeft="@drawable/ic_person_black_24dp"
+        android:drawablePadding="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

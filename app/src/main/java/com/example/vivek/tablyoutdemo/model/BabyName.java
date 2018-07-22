@@ -4,10 +4,12 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 @Entity(tableName = "BabyTable")
-public class BabyName {
+public class BabyName implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -40,6 +42,26 @@ public class BabyName {
         this.name = name;
         this.origin = origin;
     }
+
+    protected BabyName(Parcel in) {
+        id = in.readInt();
+        gender = in.readString();
+        meaning = in.readString();
+        name = in.readString();
+        origin = in.readString();
+    }
+
+    public static final Creator<BabyName> CREATOR = new Creator<BabyName>() {
+        @Override
+        public BabyName createFromParcel(Parcel in) {
+            return new BabyName(in);
+        }
+
+        @Override
+        public BabyName[] newArray(int size) {
+            return new BabyName[size];
+        }
+    };
 
     public String getGender() {
         return gender;
@@ -80,5 +102,19 @@ public class BabyName {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(gender);
+        dest.writeString(meaning);
+        dest.writeString(name);
+        dest.writeString(origin);
     }
 }

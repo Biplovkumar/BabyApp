@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -27,18 +29,16 @@ import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 import io.reactivex.CompletableObserver;
 import io.reactivex.CompletableOnSubscribe;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     RecyclerView recyclerView;
+    VerticalRecyclerViewFastScroller recyclerViewFastScroller;
     AppDatabase database;
     private BabyAdapter adapter;
     private ProgressBar progressBar;
@@ -49,10 +49,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         database = AppDatabase.getDatabase(getApplicationContext());
         recyclerView = findViewById(R.id.recyclerview);
+        recyclerViewFastScroller=findViewById(R.id.fast_scroller);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         adapter = new BabyAdapter(this);
         recyclerView.setAdapter(adapter);
+        recyclerViewFastScroller.setRecyclerView(recyclerView);
+        recyclerView.setOnScrollListener(recyclerViewFastScroller.getOnScrollListener());
 
         progressBar = findViewById(R.id.progressBar);
 
@@ -122,28 +125,52 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MyActivity", "Line: " + line);
 
                 String[] tokens = line.split(",");
-
                 mGender = tokens[1];
                 mMeaning = tokens[2];
                 mName = tokens[3];
                 mOrigin = tokens[4];
 
-
                 BabyName babyName = new BabyName(mGender, mMeaning, mName, mOrigin);
-                babyName.setGender(mGender);
-                babyName.setName(mName);
-                babyName.setOrigin(mOrigin);
-                babyName.setMeaning(mMeaning);
                 babyNames.add(babyName);
                 Log.d(TAG, "Just created: " + mGender + mMeaning + mName + mOrigin);
-
             }
+
+            database.babyDao().insertAll(babyNames);
         } catch (IOException e) {
             Log.wtf("MyActivity", "Error reading data file on line" + line, e);
             e.printStackTrace();
         }
 
         return babyNames;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.sort_boy:
+
+
+                break;
+
+            case R.id.sort_girl:
+
+
+                break;
+
+        }
+
+        return super.onOptionsItemSelected(item);
+
     }
 }
 
