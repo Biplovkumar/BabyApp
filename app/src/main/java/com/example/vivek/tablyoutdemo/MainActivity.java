@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         performDataInsertion();
+
         observeBabyList();
     }
 
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 if (oldList.isEmpty()) {
                     List<BabyName> list = readData();
                     database.babyDao().insertAll(list);
+
                 }
                 e.onComplete();
             }
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         InputStreamReader csvStreamReader = new InputStreamReader(is);
 
         CSVReader reader = new CSVReader(csvStreamReader);
+        reader.skip(1);
 
         // read line by line
         String[] record = null;
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
             babyNames.add(babyName);
 
             Log.d(TAG, "Just created: " +"GEnder :" +mGender  +"Meaning :"+ mMeaning +"Name"+ mName +"Origin :" +mOrigin);
+
         }
 
         return babyNames;
