@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.vivek.tablyoutdemo.adapter.BabyAdapter;
 import com.example.vivek.tablyoutdemo.database.AppDatabase;
 import com.example.vivek.tablyoutdemo.model.BabyName;
+import com.opencsv.CSVReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -110,35 +111,26 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private List<BabyName> readData() {
+    private List<BabyName> readData() throws IOException {
         List<BabyName> babyNames = new ArrayList<>();
         InputStream is = getResources().openRawResource(R.raw.babynames);
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(is, Charset.forName("UTF-8"))
-        );
-        String line = "";
+        InputStreamReader csvStreamReader = new InputStreamReader(is);
 
-        try {
-            reader.readLine();
-            String mGender, mMeaning, mName, mOrigin;
-            while ((line = reader.readLine()) != null) {
-                Log.d("MyActivity", "Line: " + line);
+        CSVReader reader = new CSVReader(csvStreamReader);
 
-                String[] tokens = line.split(",");
-                mGender = tokens[1];
-                mMeaning = tokens[2];
-                mName = tokens[3];
-                mOrigin = tokens[4];
+        // read line by line
+        String[] record = null;
+        String mGender, mMeaning, mName, mOrigin;
+        while ((record = reader.readNext()) != null) {
+            mGender = record[1];
+            mMeaning = record[2];
+            mName = record[3];
+            mOrigin = record[4];
 
-                BabyName babyName = new BabyName(mGender, mMeaning, mName, mOrigin);
-                babyNames.add(babyName);
-                Log.d(TAG, "Just created: " + mGender + mMeaning + mName + mOrigin);
-            }
+            BabyName babyName = new BabyName(mGender, mMeaning, mName, mOrigin);
+            babyNames.add(babyName);
 
-            database.babyDao().insertAll(babyNames);
-        } catch (IOException e) {
-            Log.wtf("MyActivity", "Error reading data file on line" + line, e);
-            e.printStackTrace();
+            Log.d(TAG, "Just created: " +"GEnder :" +mGender  +"Meaning :"+ mMeaning +"Name"+ mName +"Origin :" +mOrigin);
         }
 
         return babyNames;
@@ -158,12 +150,30 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.sort_boy:
-
+                database.babyDao().getAllMaleName().observe(this, new Observer<List<BabyName>>() {
+                    @Override
+                    public void onChanged(@Nullable List<BabyName> babyNames) {
+                        adapter.setBabyNames(babyNames);
+                        adapter.notifyDataSetChanged();
+                        if (!babyNames.isEmpty()) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                });
 
                 break;
 
             case R.id.sort_girl:
-
+                database.babyDao().getAllFemaleName().observe(this, new Observer<List<BabyName>>() {
+                    @Override
+                    public void onChanged(@Nullable List<BabyName> babyNames) {
+                        adapter.setBabyNames(babyNames);
+                        adapter.notifyDataSetChanged();
+                        if (!babyNames.isEmpty()) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                });
 
                 break;
 
