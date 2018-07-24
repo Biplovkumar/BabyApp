@@ -21,10 +21,10 @@ public interface BabyDao {
     @Query("SELECT * FROM BabyTable ")
     List<BabyName> getAllDataDirect();
 
-    @Query("SELECT *FROM BabyTable WHERE Gender > :Boy")
+    @Query("SELECT *FROM BabyTable WHERE Gender (:Boy)")
     List<BabyName> getAllMaleName(String Boy);
 
-    @Query("SELECT *FROM BabyTable WHERE Gender >:Girl")
+    @Query("SELECT *FROM BabyTable WHERE Gender (:Girl)")
     List<BabyName> getAllFemaleName(String Girl);
 
 
